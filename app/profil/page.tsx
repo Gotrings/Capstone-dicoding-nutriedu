@@ -135,14 +135,11 @@ export default function ProfilePage() {
                       {new Date(e.createdAt).toDateString()}
                     </td>
                     <td className="px-4 py-2 flex space-x-2">
-                      <Button variant="ghost" size="icon">
-                        <Download className="w-4 h-4" />
-                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={async () => {
-                          if (confirm("yakin nih")) {
+                          if (confirm("Konfirmasi data di hapus")) {
                             await handleDelete(e.id);
                           }
                         }}
