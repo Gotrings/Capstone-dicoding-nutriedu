@@ -12,31 +12,22 @@ interface ApiResponse {
 export default function ProfilePage() {
   const [data, setData] = useState<ApiResponse>();
   const [session, setSession] = useState<string>();
-  const colorMap = {
-    normal: "#00FF00",
-    stunting: "#FFFF00",
-    tinggi: "#0000FF",
-    "severely stunting": "#FF0000",
-  } as const;
+ const color = {
+    normal: "#0FB200",
+    stunting: "#40c0f3",
+    tinggi: "#d88e47",
+    "severely_stunting": "#ff5355",
+  };
 
-  type StatusKey = keyof typeof colorMap;
-  function getColorFromStatus(status: string): string {
-    // ubah dari "NORMAL" → "normal", "SEVERELYSTUNTED" → "severely stunting"
-    const key = status.split("").join(" ").toLowerCase() as StatusKey;
 
-    return colorMap[key] ?? "#CCCCCC"; // fallback color jika tidak cocok
-  }
 
-  function hexToRgba(hex: string, opacity: number): string {
-  const sanitizedHex = hex.replace("#", "");
-  const bigint = parseInt(sanitizedHex, 16);
-
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-}
+  const transparentColor: any = (hexColor: string, opacity = 0.2) => {
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -144,7 +135,7 @@ export default function ProfilePage() {
                 {data?.analyses.map((e) => (
                   <tr className="border-b" key={e.id}>
                     <td className="px-4 py-2">
-                      <div>Keanu Dustin</div>
+                      <div>{e.name}</div>
                       <div className="text-xs text-gray-500">{e.gender}</div>
                     </td>
                     <td className="px-4 py-2">{e.age}bln</td>
@@ -153,10 +144,10 @@ export default function ProfilePage() {
                     </td>
                     <td className="px-4 py-2">
                       <span
-                        className={"px-2 py-1 rounded-full text-xs"}
+                        className={'px-2 py-1 rounded-full text-xs'}
                         style={{
-                          backgroundColor: getColorFromStatus(e.status),
-                          color:hexToRgba(getColorFromStatus(e.status), 0.3)
+                          backgroundColor: transparentColor(color[e.status], 0.2),
+                          color:(color[e.status])
                         }}
                       >
                         {e.status}
