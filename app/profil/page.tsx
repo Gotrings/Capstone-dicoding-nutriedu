@@ -12,6 +12,31 @@ interface ApiResponse {
 export default function ProfilePage() {
   const [data, setData] = useState<ApiResponse>();
   const [session, setSession] = useState<string>();
+  const colorMap = {
+    normal: "#00FF00",
+    stunting: "#FFFF00",
+    tinggi: "#0000FF",
+    "severely stunting": "#FF0000",
+  } as const;
+
+  type StatusKey = keyof typeof colorMap;
+  function getColorFromStatus(status: string): string {
+    // ubah dari "NORMAL" → "normal", "SEVERELYSTUNTED" → "severely stunting"
+    const key = status.split("").join(" ").toLowerCase() as StatusKey;
+
+    return colorMap[key] ?? "#CCCCCC"; // fallback color jika tidak cocok
+  }
+
+  function hexToRgba(hex: string, opacity: number): string {
+  const sanitizedHex = hex.replace("#", "");
+  const bigint = parseInt(sanitizedHex, 16);
+
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -127,7 +152,13 @@ export default function ProfilePage() {
                       {e.weight}kg / {e.height} cm
                     </td>
                     <td className="px-4 py-2">
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
+                      <span
+                        className={"px-2 py-1 rounded-full text-xs"}
+                        style={{
+                          backgroundColor: getColorFromStatus(e.status),
+                          color:hexToRgba(getColorFromStatus(e.status), 0.3)
+                        }}
+                      >
                         {e.status}
                       </span>
                     </td>
